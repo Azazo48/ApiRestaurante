@@ -22,12 +22,13 @@ export async function reservationsOrderedDate() {
 }
 
 export async function addReservation(persons, name, phone, date, time) {
-    const [result] = await pool.query(
-      `CALL addReservation(?, ?, ?, ?, ?);`,
-      [persons, name, phone, date, time]
-    );
-    return result;
+  const [result] = await pool.query(
+    `CALL addReservation(?, ?, ?, ?, ?);`,
+    [persons, name, phone, date, time]
+  );
+  return result;
 }
+
 
 export async function deleteReservation(id) {
   try {
@@ -40,7 +41,7 @@ export async function deleteReservation(id) {
 }
 
 export async function getTablesDisponibles(date, time) {
-  // Obtenemos las mesas reservadas para esa fecha y hora
+  // Obtener las mesas reservadas para esa fecha y hora
   const [rows] = await pool.query(`
     SELECT reservation_mesa
     FROM reservations
@@ -49,9 +50,11 @@ export async function getTablesDisponibles(date, time) {
 
   const allTables = ["mesa1", "mesa2", "mesa3", "mesa4", "mesa5", "mesa6"];
 
+  // Extraemos solo las mesas que ya están reservadas
   const reservedTables = rows.map(row => row.reservation_mesa);
 
+  // Filtramos las mesas disponibles
   const availableTables = allTables.filter(table => !reservedTables.includes(table));
 
-  return availableTables;
+  return availableTables; // Devolvemos solo las mesas disponibles
 }

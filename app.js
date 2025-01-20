@@ -25,16 +25,22 @@ app.get("/reservations/ordered", async (req, res) => {
   res.status(200).json(reservations);
 });
 
-app.post("/reservations", async (req, res) => {
+app.post("/addreservations", async (req, res) => {
   const { persons, name, phone, date, time } = req.body;
+  console.log("Datos recibidos:", { persons, name, phone, date, time });
 
   try {
     await addReservation(persons, name, phone, date, time);
-    res.status(201).json({ message: "Reservation added successfully." });
+    res.status(201).json({ message: "Cita Completada!." });
   } catch (error) {
-    res.status(500).json({ error: "Failed to add reservation." });
+    if (error.code === '45000') {
+      res.status(400).json({ error: error.message });
+    } else {
+      res.status(500).json({ error: "Todas las Mesas estan Reservadas" });
+    }
   }
 });
+
 
 app.delete("/reservations/:id", async (req, res) => {
   const { id } = req.params;
@@ -43,12 +49,15 @@ app.delete("/reservations/:id", async (req, res) => {
     await deleteReservation(Number(id));
     res.status(200).json({ message: "Reservation deleted successfully." });
   } catch (error) {
-    /* console.error("Error deleting reservation:", error); */
-    res.status(500).json({ error: "Failed to delete reservation." });
+    if (error.code === '45000') {
+      res.status(400).json({ error: error.message }); 
+    } else {
+      res.status(500).json({ error: "Cupos llenos" });
+    }
   }
 });
 
-app.get("/available-tables", async (req, res) => {
+app.get("/tablesdisponibles", async (req, res) => {
   const { date, time } = req.query;
 
   const parsedDate = new Date(date);
