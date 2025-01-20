@@ -62,7 +62,7 @@ app.get("/tablesdisponibles", async (req, res) => {
 
   const parsedDate = new Date(date);
   if (isNaN(parsedDate)) {
-    return res.status(400).json({ error: "Invalid date format. Use 'YYYY-MM-DD'." });
+    return res.status(400).json({ error: "Formato de Fecha No Valido" });
   }
 
   try {
@@ -72,8 +72,8 @@ app.get("/tablesdisponibles", async (req, res) => {
 
     res.status(200).json({ availableTables });
   } catch (error) {
-    console.error("Error fetching available tables:", error);
-    res.status(500).json({ error: "Failed to fetch available tables." });
+    console.error("Error En Las Mesas Disponibles", error);
+    res.status(500).json({ error: "Error En Las Mesas Disponibles." });
   }
 });
 
